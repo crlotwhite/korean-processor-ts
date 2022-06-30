@@ -73,15 +73,10 @@ function syllableEndingRule(krchArray: KRCH[]) {
     krchArray.forEach((krch) => {
         let changed: string | null;
         switch(krch.jongSeong) {
-            case 'ㄱ':
             case 'ㄲ':
             case 'ㅋ':
                 changed = 'ㄱ';
                 break;
-            case 'ㄴ':
-                changed = 'ㄴ';
-                break;
-            case 'ㄷ':
             case 'ㅌ':
             case 'ㅅ':
             case 'ㅆ':
@@ -90,18 +85,8 @@ function syllableEndingRule(krchArray: KRCH[]) {
             case 'ㅎ':
                 changed = 'ㄷ';
                 break;
-            case 'ㄹ':
-                changed = 'ㄹ';
-                break;
-            case 'ㅁ':
-                changed = 'ㅁ';
-                break;
-            case 'ㅂ':
             case 'ㅍ':
                 changed = 'ㅂ';
-                break;
-            case 'ㅇ':
-                changed = 'ㅇ';
                 break;
             default:
                 changed = krch.jongSeong;
