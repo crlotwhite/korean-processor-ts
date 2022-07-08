@@ -1,3 +1,4 @@
+// 한국어 처리를 위한 상수 객체
 const UniKR: {
     start: number,
     end: number,
@@ -25,6 +26,7 @@ const UniKR: {
     ]
 };
 
+// 한국어 문자 처리를 위한 클래스
 class KRCH {
     choSeong: string;
     jungSeong: string;
@@ -52,6 +54,7 @@ function isKoreanWord(str: string) {
     return true;
 }
 
+// 한국어 자음 모음 분리
 function parseKorean(ch: string) {
     const unicode = ch.charCodeAt(0);
 
@@ -109,6 +112,48 @@ function syllableEndingRule(krchArray: KRCH[]) {
         }
         krch.jongSeong = changed;
     });
+    
+}
+
+// 구개음화
+function palatalization(krchArray: KRCH[]) {
+    for (let i=0,j=1;j<krchArray.length;i++,j++) {
+        // 두번째 중성이 ㅣ,ㅑ,ㅕ,ㅛ,ㅠ,ㅒ,ㅖ가 아니거나 종성이 있을 때, 생략 
+        if (
+            krchArray[j].jungSeong !== 'ㅣ' 
+            || krchArray[j].jungSeong !== 'ㅑ'
+            || krchArray[j].jungSeong !== 'ㅕ'
+            || krchArray[j].jungSeong !== 'ㅛ'
+            || krchArray[j].jungSeong !== 'ㅠ'
+            || krchArray[j].jungSeong !== 'ㅒ'
+            || krchArray[j].jungSeong !== 'ㅖ'
+            || krchArray[j].jongSeong !== ''
+        ) 
+            continue;
+
+        switch(krchArray[i].jongSeong) {
+            case 'ㄷ':
+                switch(krchArray[j].choSeong) {
+                    case 'ㅇ':
+                        krchArray[i].jongSeong = '';
+                        krchArray[j].choSeong = 'ㅈ';
+                        break;
+                    case 'ㅎ':
+                        krchArray[i].jongSeong = '';
+                        krchArray[j].choSeong = 'ㅊ';
+                        break;
+                }
+                break;
+            case 'ㅌ':
+                krchArray[i].jongSeong = '';
+                krchArray[j].choSeong = 'ㅊ';
+                break;
+            case 'ㄾ':
+                krchArray[i].jongSeong = 'ㄹ';
+                krchArray[j].choSeong = 'ㅊ';
+                break;
+        }
+    }
     
 }
 
