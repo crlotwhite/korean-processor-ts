@@ -135,17 +135,17 @@ function palatalization(krchArray: KRCH[]) {
             case 'ㄷ':
                 switch (krchArray[j].choSeong) {
                     case 'ㅇ':
-                        krchArray[i].jongSeong = '';
+                        krchArray[i].jongSeong = null;
                         krchArray[j].choSeong = 'ㅈ';
                         break;
                     case 'ㅎ':
-                        krchArray[i].jongSeong = '';
+                        krchArray[i].jongSeong = null;
                         krchArray[j].choSeong = 'ㅊ';
                         break;
                 }
                 break;
             case 'ㅌ':
-                krchArray[i].jongSeong = '';
+                krchArray[i].jongSeong = null;
                 krchArray[j].choSeong = 'ㅊ';
                 break;
             case 'ㄾ':
@@ -194,19 +194,19 @@ function aspiration(krchArray: KRCH[]) {
         if (krchArray[j].choSeong === 'ㅎ') {
             switch (krchArray[i].jongSeong) {
                 case 'ㄱ':
-                    krchArray[i].jongSeong = '';
+                    krchArray[i].jongSeong = null;
                     krchArray[j].choSeong = 'ㅋ';
                     break;
                 case 'ㄷ':
-                    krchArray[i].jongSeong = '';
+                    krchArray[i].jongSeong = null;
                     krchArray[j].choSeong = 'ㅌ';
                     break;
                 case 'ㅂ':
-                    krchArray[i].jongSeong = '';
+                    krchArray[i].jongSeong = null;
                     krchArray[j].choSeong = 'ㅍ';
                     break;
                 case 'ㅈ':
-                    krchArray[i].jongSeong = '';
+                    krchArray[i].jongSeong = null;
                     krchArray[j].choSeong = 'ㅊ';
                     break;
                 case 'ㄲ':
@@ -247,7 +247,7 @@ function aspiration(krchArray: KRCH[]) {
             }
             switch (krchArray[i].jongSeong) {
                 case 'ㅎ':
-                    krchArray[i].jongSeong = '';
+                    krchArray[i].jongSeong = null;
                     break;
                 case 'ㄶ':
                     krchArray[i].jongSeong = 'ㄴ';
@@ -258,6 +258,25 @@ function aspiration(krchArray: KRCH[]) {
             }
         }
         
+    }
+}
+
+// ㄴ 첨가
+function nAddition(krchArray: KRCH[]) {
+    for (let i=0,j=1;j<krchArray.length;i++,j++) {
+        if (
+            krchArray[i].jongSeong !== null 
+            && krchArray[j].choSeong === 'ㅇ'
+            && (
+                krchArray[j].jungSeong === 'ㅣ'
+                || krchArray[j].jungSeong === 'ㅑ'
+                || krchArray[j].jungSeong === 'ㅕ'
+                || krchArray[j].jungSeong === 'ㅛ'
+                || krchArray[j].jungSeong === 'ㅠ'
+            )
+        ) {
+            krchArray[j].choSeong = 'ㄴ';
+        }
     }
 }
 
@@ -298,16 +317,17 @@ function pipe(words: string) {
     // 경음화
     tensification(krchArray);
 
+    // ㄴ첨가
+    nAddition(krchArray);
+
     // 테스트를 위한 출력 코드
     krchArray.forEach((value) => {
         console.log(value.getOrigins().toString());
     })
-    
 }
 
-
 function main() {
-    pipe('서브도메인쓸수있는유일한무료프로젝트였는데이게이렇게되네굳이볕이안고신지담다');
+    pipe('서브도메인쓸수있는유일한무료프로젝트였는데이게이렇게되네굳이볕이안고신지담다솜이불맨입');
 }
 
 main();
