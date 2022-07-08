@@ -4,7 +4,8 @@ const UniKR: {
     end: number,
     choSeong: readonly string[],
     jungSeong: readonly string[],
-    jongSeong: readonly string[]
+    jongSeong: readonly string[],
+    postpositions: readonly string[]
 } = {
     start: 44032,
     end: 55203,
@@ -23,6 +24,19 @@ const UniKR: {
         'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ',
         'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ',
         'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'
+    ],
+    postpositions: [
+        '이', '가', // 행위주격
+        '으로써', '로써', // 도구격
+        '에서', '에게서', '부터', // 원천격
+        '까지', // 도달격
+        '에게', '한테', '께', // 수혜격
+        '와', '과', // 동반격
+        '에서', // 처소격
+        '을', '를', // 목적격
+        '의', // 소유격
+        '으로서', '로서', // 위격
+        '으로', '로', // 향격
     ]
 };
 
@@ -83,6 +97,12 @@ function parseKorean(ch: string) {
         UniKR.jungSeong[indexOfJungSeong],
         indexOfJongSeong !== 0 ? UniKR.jongSeong[indexOfJongSeong] : null
     );
+}
+
+// 조사 체크
+function isPostposition(word: string) {
+    return UniKR.postpositions.indexOf(word) !== -1 ? true : false;
+
 }
 
 //음절의 끝소리 규칙
@@ -173,8 +193,6 @@ function palatalization(krchArray: KRCH[]) {
 // 경음화 (된소리되기)
 function tensification(krchArray: KRCH[]) {
     for (let i=0,j=1;j<krchArray.length;i++,j++) {
-        //TODO: 조사 생략 구문 추가 할 것
-
         switch (krchArray[i].jongSeong) {
             case 'ㄱ':
             case 'ㄷ':
@@ -413,9 +431,9 @@ export function pipe(words: string) {
     cascading(krchArray);
 
     // 테스트를 위한 출력 코드
-    // krchArray.forEach((value) => {
-    //     console.log(value.mergeOrigin());
-    // })
+//     krchArray.forEach((value) => {
+//         console.log(value.mergeOrigin());
+//     })
 }
 
 // function main() {
