@@ -120,16 +120,16 @@ function palatalization(krchArray: KRCH[]) {
     for (let i=0,j=1;j<krchArray.length;i++,j++) {
         // 두번째 중성이 ㅣ,ㅑ,ㅕ,ㅛ,ㅠ,ㅒ,ㅖ가 아니거나 종성이 있을 때, 생략 
         if (
-            krchArray[j].jungSeong !== 'ㅣ' 
-            || krchArray[j].jungSeong !== 'ㅑ'
-            || krchArray[j].jungSeong !== 'ㅕ'
-            || krchArray[j].jungSeong !== 'ㅛ'
-            || krchArray[j].jungSeong !== 'ㅠ'
-            || krchArray[j].jungSeong !== 'ㅒ'
-            || krchArray[j].jungSeong !== 'ㅖ'
-            || krchArray[j].jongSeong !== ''
-        ) 
-            continue;
+            (krchArray[j].jungSeong !== 'ㅣ' 
+            && krchArray[j].jungSeong !== 'ㅑ'
+            && krchArray[j].jungSeong !== 'ㅕ'
+            && krchArray[j].jungSeong !== 'ㅛ'
+            && krchArray[j].jungSeong !== 'ㅠ'
+            && krchArray[j].jungSeong !== 'ㅒ'
+            && krchArray[j].jungSeong !== 'ㅖ')
+            && krchArray[j].jongSeong !== ''
+        ) continue;
+            
 
         switch(krchArray[i].jongSeong) {
             case 'ㄷ':
@@ -155,9 +155,17 @@ function palatalization(krchArray: KRCH[]) {
         }
     }
     
+    
 }
 
 // 전체 처리 과정
+/**
+ * 파이프라인 히스토리
+ * 1. 음절 끝소리 규칙을 먼저 적용하면 다음의 문제 발생
+ * - 볕이 -> 볃이 -> 벼지
+ * - 하지만 올바른 발음은 벼치임.
+ * => 결론: 구개음화 -> 끝소리규칙
+ */
 function pipe(words: string) {
     // 한글이 아닌 문자가 포함된 경우
     if (!isKoreanWord(words)) {
@@ -171,6 +179,9 @@ function pipe(words: string) {
         krchArray.push(res);
     }
 
+    // 구개음화
+    palatalization(krchArray);
+
     // 음절의 끝소리 규칙
     syllableEndingRule(krchArray);
 
@@ -183,7 +194,7 @@ function pipe(words: string) {
 
 
 function main() {
-    pipe('서브도메인쓸수있는유일한무료프로젝트였는데이게이렇게되네');
+    pipe('서브도메인쓸수있는유일한무료프로젝트였는데이게이렇게되네굳이볕이');
 }
 
 main();
