@@ -188,6 +188,79 @@ function tensification(krchArray: KRCH[]) {
     }
 }
 
+// 격음화
+function aspiration(krchArray: KRCH[]) {
+    for (let i=0, j=1;j<krchArray.length;i++,j++) {
+        if (krchArray[j].choSeong === 'ㅎ') {
+            switch (krchArray[i].jongSeong) {
+                case 'ㄱ':
+                    krchArray[i].jongSeong = '';
+                    krchArray[j].choSeong = 'ㅋ';
+                    break;
+                case 'ㄷ':
+                    krchArray[i].jongSeong = '';
+                    krchArray[j].choSeong = 'ㅌ';
+                    break;
+                case 'ㅂ':
+                    krchArray[i].jongSeong = '';
+                    krchArray[j].choSeong = 'ㅍ';
+                    break;
+                case 'ㅈ':
+                    krchArray[i].jongSeong = '';
+                    krchArray[j].choSeong = 'ㅊ';
+                    break;
+                case 'ㄲ':
+                    krchArray[i].jongSeong = 'ㄱ';
+                    krchArray[j].choSeong = 'ㅋ';
+                    break;
+                case 'ㄵ':
+                    krchArray[i].jongSeong = 'ㄴ';
+                    krchArray[j].choSeong = 'ㅊ';
+                    break;
+                case 'ㄺ':
+                    krchArray[i].jongSeong = 'ㄹ';
+                    krchArray[j].choSeong = 'ㅋ';
+                    break;
+                case 'ㄼ':
+                    krchArray[i].jongSeong = 'ㄹ';
+                    krchArray[j].choSeong = 'ㅍ';
+                    break;
+            }
+        } else if (
+            krchArray[i].jongSeong === 'ㅎ' 
+            || krchArray[i].jongSeong === 'ㄶ' 
+            || krchArray[i].jongSeong === 'ㅀ'
+        ) {
+            switch (krchArray[j].choSeong) {
+                case 'ㄱ':
+                    krchArray[j].choSeong = 'ㅋ';
+                    break;
+                case 'ㄷ':
+                    krchArray[j].choSeong = 'ㅌ';
+                    break;
+                case 'ㅂ':
+                    krchArray[j].choSeong = 'ㅍ';
+                    break;
+                case 'ㅈ':
+                    krchArray[j].choSeong = 'ㅊ';
+                    break;
+            }
+            switch (krchArray[i].jongSeong) {
+                case 'ㅎ':
+                    krchArray[i].jongSeong = '';
+                    break;
+                case 'ㄶ':
+                    krchArray[i].jongSeong = 'ㄴ';
+                    break;
+                case 'ㅀ':
+                    krchArray[i].jongSeong = 'ㄹ';
+                    break;
+            }
+        }
+        
+    }
+}
+
 // 전체 처리 과정
 /**
  * 파이프라인 히스토리
@@ -195,6 +268,10 @@ function tensification(krchArray: KRCH[]) {
  * - 볕이 -> 볃이 -> 벼지
  * - 하지만 올바른 발음은 벼치임.
  * => 결론: 구개음화 -> 끝소리규칙
+ * 2. 음절 끝소리 규칙으로 인해 ㅎ이 변해서 격음화가 작동 않함
+ * - 이렇게 -> 이럳게 -> 이럳께
+ * - 하지만 올바른 발음은 이러케임.
+ * => 결론: 구개음화 이후, 끝소리규칙 이전에 동작함.
  */
 function pipe(words: string) {
     // 한글이 아닌 문자가 포함된 경우
@@ -211,6 +288,9 @@ function pipe(words: string) {
 
     // 구개음화
     palatalization(krchArray);
+
+    // 갹음화
+    aspiration(krchArray);
 
     // 음절의 끝소리 규칙
     syllableEndingRule(krchArray);
