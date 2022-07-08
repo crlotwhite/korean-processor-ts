@@ -45,7 +45,7 @@ class KRCH {
 
 // 단 하나의 문자라도 한글이 아니면 false
 function isKoreanWord(str: string) {
-    for(let i=0;i<str.length;i++) {
+    for (let i=0;i<str.length;i++) {
         const unicode = str[i].charCodeAt(0);
         if (unicode < UniKR.start || unicode > UniKR.end) {
             return false;
@@ -75,7 +75,7 @@ function parseKorean(ch: string) {
 function syllableEndingRule(krchArray: KRCH[]) {
     krchArray.forEach((krch) => {
         let changed: string | null;
-        switch(krch.jongSeong) {
+        switch (krch.jongSeong) {
             case 'ㄱ':
             case 'ㄲ':
             case 'ㅋ':
@@ -131,9 +131,9 @@ function palatalization(krchArray: KRCH[]) {
         ) continue;
             
 
-        switch(krchArray[i].jongSeong) {
+        switch (krchArray[i].jongSeong) {
             case 'ㄷ':
-                switch(krchArray[j].choSeong) {
+                switch (krchArray[j].choSeong) {
                     case 'ㅇ':
                         krchArray[i].jongSeong = '';
                         krchArray[j].choSeong = 'ㅈ';
@@ -154,8 +154,38 @@ function palatalization(krchArray: KRCH[]) {
                 break;
         }
     }
-    
-    
+}
+
+// 경음화 (된소리되기)
+function tensification(krchArray: KRCH[]) {
+    for (let i=0,j=1;j<krchArray.length;i++,j++) {
+        switch (krchArray[i].jongSeong) {
+            case 'ㄱ':
+            case 'ㄷ':
+            case 'ㅂ':
+            case 'ㄹ':
+            case 'ㄴ':
+            case 'ㅁ':
+                switch (krchArray[j].choSeong) {
+                    case 'ㄱ':
+                        krchArray[j].choSeong = 'ㄲ';
+                        break;
+                    case 'ㄷ':
+                        krchArray[j].choSeong = 'ㄸ';
+                        break;
+                    case 'ㅂ':
+                        krchArray[j].choSeong = 'ㅃ';
+                        break;
+                    case 'ㅅ':
+                        krchArray[j].choSeong = 'ㅆ';
+                        break;
+                    case 'ㅈ':
+                        krchArray[j].choSeong = 'ㅉ';
+                        break;
+                }
+                break;
+        }
+    }
 }
 
 // 전체 처리 과정
@@ -185,6 +215,9 @@ function pipe(words: string) {
     // 음절의 끝소리 규칙
     syllableEndingRule(krchArray);
 
+    // 경음화
+    tensification(krchArray);
+
     // 테스트를 위한 출력 코드
     krchArray.forEach((value) => {
         console.log(value.getOrigins().toString());
@@ -194,7 +227,7 @@ function pipe(words: string) {
 
 
 function main() {
-    pipe('서브도메인쓸수있는유일한무료프로젝트였는데이게이렇게되네굳이볕이');
+    pipe('서브도메인쓸수있는유일한무료프로젝트였는데이게이렇게되네굳이볕이안고신지담다');
 }
 
 main();
