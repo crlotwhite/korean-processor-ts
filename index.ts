@@ -41,6 +41,20 @@ class KRCH {
     public getOrigins(): string[] {
         return [this.choSeong, this.jungSeong, this.jongSeong !== null ? this.jongSeong : ''];
     }
+
+    public mergeOrigin(): string {
+        const unicodeOfJungSeong = this.jungSeong.charCodeAt(0);
+
+        const consonantStart = 12623;
+
+        const indexOfChoSeong = UniKR.choSeong.indexOf(this.choSeong);
+        const indexOfJungSeong = unicodeOfJungSeong - consonantStart;
+        const indexOfJongSeong = this.jongSeong !== null ? UniKR.jongSeong.indexOf(this.jongSeong) : 0;
+
+        return String.fromCharCode(
+            UniKR.start + (indexOfChoSeong * 588) + (indexOfJungSeong * 28) + indexOfJongSeong
+        );
+    }
 }
 
 // 단 하나의 문자라도 한글이 아니면 false
@@ -159,6 +173,8 @@ function palatalization(krchArray: KRCH[]) {
 // 경음화 (된소리되기)
 function tensification(krchArray: KRCH[]) {
     for (let i=0,j=1;j<krchArray.length;i++,j++) {
+        //TODO: 조사 생략 구문 추가 할 것
+
         switch (krchArray[i].jongSeong) {
             case 'ㄱ':
             case 'ㄷ':
@@ -280,8 +296,65 @@ function nAddition(krchArray: KRCH[]) {
     }
 }
 
+// 자음군 단순화
+function simplification(krchArray: KRCH[]) {
+    for (let i=0,j=1;j<krchArray.length;i++,j++) {
+        // 예외 단어 1. 밟다, 넓다 등등
+        switch (krchArray[i].mergeOrigin()) {
+            case '밟':
+                krchArray[i].jongSeong = 'ㅂ';
+                continue;
+            case '넓':
+                switch (krchArray[j].mergeOrigin()) {
+                    case '다':
+                    case '둥':
+                    case '적':
+                    case '죽':
+                        krchArray[i].jongSeong = 'ㅂ';
+                }
+                continue;
+        }
+
+        // 예외 단어 2. ㄺ 예외, ㄱ앞에서 ㄹ이 됨.
+        if (krchArray[i].jongSeong === 'ㄺ' && krchArray[j].choSeong === 'ㄱ') {
+            krchArray[i].jongSeong = 'ㄹ';
+            continue;
+        }
+
+        
+        // 일반
+        switch (krchArray[i].jongSeong) {
+            case 'ㄳ':
+                krchArray[i].jongSeong = 'ㄱ';
+                break;
+            case 'ㄵ':
+            case 'ㄶ':
+                krchArray[i].jongSeong = 'ㄴ';
+                break;
+            case 'ㄼ':
+            case 'ㄽ':
+            case 'ㄾ':
+            case 'ㅀ':
+                krchArray[i].jongSeong = 'ㄹ';
+                break;
+            case 'ㅄ':
+                krchArray[i].jongSeong = 'ㅂ';
+                break;
+            case 'ㄺ':
+                krchArray[i].jongSeong = 'ㄱ';
+                break;
+            case 'ㄻ':
+                krchArray[i].jongSeong = 'ㅁ';
+                break;
+            case 'ㄿ':
+                krchArray[i].jongSeong = 'ㅍ';
+                break;
+        }
+    }
+}
+
 // 전체 처리 과정
-/**
+/*
  * 파이프라인 히스토리
  * 1. 음절 끝소리 규칙을 먼저 적용하면 다음의 문제 발생
  * - 볕이 -> 볃이 -> 벼지
@@ -308,7 +381,10 @@ function pipe(words: string) {
     // 구개음화
     palatalization(krchArray);
 
-    // 갹음화
+    // 자음군 단순화
+    simplification(krchArray);
+
+    // 격음화
     aspiration(krchArray);
 
     // 음절의 끝소리 규칙
@@ -320,14 +396,18 @@ function pipe(words: string) {
     // ㄴ첨가
     nAddition(krchArray);
 
+    
+
     // 테스트를 위한 출력 코드
     krchArray.forEach((value) => {
-        console.log(value.getOrigins().toString());
+        // console.log(value.getOrigins().toString());
+        console.log(value.mergeOrigin());
     })
 }
 
 function main() {
     pipe('서브도메인쓸수있는유일한무료프로젝트였는데이게이렇게되네굳이볕이안고신지담다솜이불맨입');
+    // pipe('넓죽하다삵칡')
 }
 
 main();
