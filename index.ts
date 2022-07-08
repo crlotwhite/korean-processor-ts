@@ -396,7 +396,7 @@ function cascading(krchArray: KRCH[]) {
  * - 하지만 올바른 발음은 이러케임.
  * => 결론: 구개음화 이후, 끝소리규칙 이전에 동작함.
  */
-export function pipe(words: string) {
+function pipe(words: string) {
     // 한글이 아닌 문자가 포함된 경우
     if (!isKoreanWord(words)) {
         return false;
