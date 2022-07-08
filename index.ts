@@ -378,7 +378,7 @@ function cascading(krchArray: KRCH[]) {
  * - 하지만 올바른 발음은 이러케임.
  * => 결론: 구개음화 이후, 끝소리규칙 이전에 동작함.
  */
-function pipe(words: string) {
+export function pipe(words: string) {
     // 한글이 아닌 문자가 포함된 경우
     if (!isKoreanWord(words)) {
         return false;
@@ -413,15 +413,13 @@ function pipe(words: string) {
     cascading(krchArray);
 
     // 테스트를 위한 출력 코드
-    krchArray.forEach((value) => {
-        // console.log(value.getOrigins().toString());
-        console.log(value.mergeOrigin());
-    })
+    // krchArray.forEach((value) => {
+    //     console.log(value.mergeOrigin());
+    // })
 }
 
-function main() {
-    pipe('서브도메인쓸수있는유일한무료프로젝트였는데이게이렇게되네굳이볕이안고신지담다솜이불맨입');
-    // pipe('넓죽하다삵칡')
-}
+// function main() {
+//     pipe('서브도메인쓸수있는유일한무료프로젝트였는데이게이렇게되네굳이볕이안고신지담다솜이불맨입');
+// }
 
-main();
+// main();
