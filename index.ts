@@ -434,6 +434,11 @@ function pipe(words: string) {
 //     krchArray.forEach((value) => {
 //         console.log(value.mergeOrigin());
 //     })
+    let result = '';
+    krchArray.forEach((krch) => {
+        result += krch.mergeOrigin();
+    });
+    return result;
 }
 
 // function main() {

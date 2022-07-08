@@ -20,5 +20,7 @@
 
 ## 테스트
 아래의 사이트에서 테스트 해볼 수 있습니다.
+[깃허브 페이지](https://crlotwhite.github.io/korean_phonology_test/)
 
-잘못 된 변화에 대해서는 아래의 설문을 작성해주세요.
+잘못된 변화에 대해서는 아래의 설문을 작성해 주세요.
+[설문지 링크](https://forms.gle/CED7jbhEpytzHAoF6)
