@@ -339,6 +339,10 @@ function simplification(krchArray: KRCH[]) {
                 break;
             case 'ㅄ':
                 krchArray[i].jongSeong = 'ㅂ';
+                // 없이 와 같은 예외 단어 처리
+                if (krchArray[j].choSeong === 'ㅇ') {
+                    krchArray[j].choSeong = 'ㅅ';
+                }
                 break;
             case 'ㄺ':
                 krchArray[i].jongSeong = 'ㄱ';
@@ -349,6 +353,15 @@ function simplification(krchArray: KRCH[]) {
             case 'ㄿ':
                 krchArray[i].jongSeong = 'ㅍ';
                 break;
+        }
+    }
+}
+
+function cascading(krchArray: KRCH[]) {
+    for (let i=0,j=1;j<krchArray.length;i++,j++) {
+        if (krchArray[i].jongSeong !== null && krchArray[j].choSeong === 'ㅇ') {
+            krchArray[j].choSeong = krchArray[i].jongSeong!;
+            krchArray[i].jongSeong = null;
         }
     }
 }
@@ -396,7 +409,8 @@ function pipe(words: string) {
     // ㄴ첨가
     nAddition(krchArray);
 
-    
+    // 연음
+    cascading(krchArray);
 
     // 테스트를 위한 출력 코드
     krchArray.forEach((value) => {
